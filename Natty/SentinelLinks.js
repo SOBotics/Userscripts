@@ -1,9 +1,11 @@
 // ==UserScript==
-// @name      Adds a Sentinel link to answers
-// @namespace https://gist.github.com/Bhargav-Rao
-// @author    Bhargav
-// @match     *://*.stackoverflow.com/*
-// @version   0.01010
+// @name        Sentinel Links 
+// @description Adds a Sentinel link to answers
+// @namespace   https://github.com/SOBotics/Userscripts
+// @author      Bhargav
+// @match       *://*.stackoverflow.com/*
+// @version     0.01010
+// @downloadURL https://github.com/SOBotics/Userscripts/raw/master/Natty/SentinelLinks.js
 // ==/UserScript==
 
 
