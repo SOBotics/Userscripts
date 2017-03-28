@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name        Sentinel Links 
-// @description Adds a Sentinel link to answers
 // @namespace   https://github.com/SOBotics/Userscripts
+// @version     0.01010
+// @description Adds a Sentinel link to answers
 // @author      Bhargav
 // @match       *://*.stackoverflow.com/*
-// @version     0.01010
+// @grant       none
 // @downloadURL https://github.com/SOBotics/Userscripts/raw/master/Natty/SentinelLinks.js
 // ==/UserScript==
 
