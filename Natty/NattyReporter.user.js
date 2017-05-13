@@ -102,7 +102,6 @@ const ScriptToInject = function() {
     if ($this.closest('a.natty-reported').length > 0) return false;
     var postId = $this.closest('div.post-menu').find('a.short-link').attr('id').split('-')[2];
     var feedback = $this.text();
-    if (!confirm('Do you really want to report this post with feedback \'' + feedback + '\'?')) return false;
     window.postMessage(JSON.stringify(['postHrefReportNatty', postId, feedback]), "*");
   }
     
