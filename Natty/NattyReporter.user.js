@@ -78,12 +78,12 @@ function sendRequest(event) {
             if (Math.round((answerDate - questionDate) / (24 * 60 * 60)) >= 30) {
               sendSentinelAndChat(messageJSON[1], messageJSON[2]);
             } else {
-				$('[data-answerid="' + messageJSON[1] + '"] a.report-natty-link').addClass('natty-reported').html('Not a late answer.');
-			}
+                $('[data-answerid="' + messageJSON[1] + '"] a.report-natty-link').addClass('natty-reported').html('Not a late answer.');
+            }
           });
         } else {
-			$('[data-answerid="' + messageJSON[1] + '"] a.report-natty-link').addClass('natty-reported').html('Answer too old.');
-		}
+            $('[data-answerid="' + messageJSON[1] + '"] a.report-natty-link').addClass('natty-reported').html('Answer too old.');
+        }
       }
     });
   }
