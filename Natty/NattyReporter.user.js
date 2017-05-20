@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Natty Reporter
 // @namespace    https://github.com/Tunaki/stackoverflow-userscripts
-// @version      0.14
+// @version      0.14.1
 // @description  Adds a Natty link below answers that sends a report for the bot in SOBotics. Intended to be used to give feedback on reports (true positive / false positive / needs edit) or report NAA/VLQ-flaggable answers.
 // @author       Tunaki
 // @include      /^https?:\/\/(www\.)?stackoverflow\.com\/.*/
@@ -77,9 +77,13 @@ function sendRequest(event) {
             // only do something when answer was posted at least 30 days after the question
             if (Math.round((answerDate - questionDate) / (24 * 60 * 60)) >= 30) {
               sendSentinelAndChat(messageJSON[1], messageJSON[2]);
-            }
+            } else {
+				$('[data-answerid="' + messageJSON[1] + '"] a.report-natty-link').addClass('natty-reported').html('Not a late answer.');
+			}
           });
-        }
+        } else {
+			$('[data-answerid="' + messageJSON[1] + '"] a.report-natty-link').addClass('natty-reported').html('Answer too old.');
+		}
       }
     });
   }
