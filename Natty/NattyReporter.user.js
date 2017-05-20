@@ -70,8 +70,8 @@ function sendRequest(event) {
       } else if (aRes.items[0]['post_type'] === 'answer') {
         var answerDate = aRes.items[0]['creation_date'];
         var currentDate = Date.now() / 1000;
-        // only do something when answer was less than 2 days ago
-        if (Math.round((currentDate - answerDate) / (24 * 60 * 60)) <= 2) {
+        // only do something when answer was less than 30 days ago, after which Natty reports age away
+        if (Math.round((currentDate - answerDate) / (24 * 60 * 60)) <= 30)
           $.get('//api.stackexchange.com/2.2/answers/'+messageJSON[1]+'/questions?site=stackoverflow&key=qhq7Mdy8)4lSXLCjrzQFaQ((&filter=!)8aBxR_Gih*BsCr', function(qRes) {
             var questionDate = qRes.items[0]['creation_date'];
             // only do something when answer was posted at least 30 days after the question
