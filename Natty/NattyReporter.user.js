@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Natty Reporter
 // @namespace    https://github.com/Tunaki/stackoverflow-userscripts
-// @version      0.16
+// @version      0.17
 // @description  Adds a Natty link below answers that sends a report for the bot in SOBotics. Intended to be used to give feedback on reports (true positive / false positive / needs edit) or report NAA/VLQ-flaggable answers.
 // @author       Tunaki
 // @include      /^https?:\/\/(www\.)?stackoverflow\.com\/.*/
@@ -150,8 +150,17 @@ const ScriptToInject = function() {
     var postID = $(this).closest('div.post-menu').find('a.short-link').attr('id').split('-')[2];
     
     //flag the post (and report to Natty)
-    $.post('//stackoverflow.com/flags/posts/' + postID + '/add/AnswerNotAnAnswer', {'fkey': StackExchange.options.user.fkey, 'otherText': ''});
-    
+    if ($(this).text() == 'link-only') {
+      $.post('//stackoverflow.com/flags/posts/' + postID + '/add/PostLowQuality', {'fkey': StackExchange.options.user.fkey, 'otherText': ''},
+        function (response) {
+          if (!response['Success']) {
+            alert('Post could not be flagged VLQ');
+          }
+        });
+    } else {
+      $.post('//stackoverflow.com/flags/posts/' + postID + '/add/AnswerNotAnAnswer', {'fkey': StackExchange.options.user.fkey, 'otherText': ''});
+    }
+
     //add a comment
     var comment = comments[$(this).text()];
     $.post('//stackoverflow.com/posts/' + postID + '/comments', {'fkey': StackExchange.options.user.fkey, 'comment': comment}, 
@@ -162,7 +171,7 @@ const ScriptToInject = function() {
         $(document).trigger('comment', postID);
     });
   }
-  
+
   function handleAnswers(postId) {
     var $posts;
     if(!postId) {
@@ -209,7 +218,6 @@ const ScriptToInject = function() {
   $(document).ready(function() {
     handleAnswers(); 
   });
-
 }
 
 const ScriptToInjectNode = document.createElement('script');
