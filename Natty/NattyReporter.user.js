@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Natty Reporter
 // @namespace    https://github.com/Tunaki/stackoverflow-userscripts
-// @version      0.17
+// @version      0.18
 // @description  Adds a Natty link below answers that sends a report for the bot in SOBotics. Intended to be used to give feedback on reports (true positive / false positive / needs edit) or report NAA/VLQ-flaggable answers.
 // @author       Tunaki
 // @include      /^https?:\/\/(www\.)?stackoverflow\.com\/.*/
@@ -148,9 +148,10 @@ const ScriptToInject = function() {
       
     e.preventDefault();
     var postID = $(this).closest('div.post-menu').find('a.short-link').attr('id').split('-')[2];
+    var whichFeedback = $(this).text();
     
     //flag the post (and report to Natty)
-    if ($(this).text() == 'link-only') {
+    if (whichFeedback == 'link-only') {
       $.post('//stackoverflow.com/flags/posts/' + postID + '/add/PostLowQuality', {'fkey': StackExchange.options.user.fkey, 'otherText': ''},
         function (response) {
           if (!response['Success']) {
@@ -162,13 +163,31 @@ const ScriptToInject = function() {
     }
 
     //add a comment
-    var comment = comments[$(this).text()];
-    $.post('//stackoverflow.com/posts/' + postID + '/comments', {'fkey': StackExchange.options.user.fkey, 'comment': comment}, 
-      function(data, textStatus, jqXHR) {
-        var commentUI = StackExchange.comments.uiForPost($('#comments-' + postID));
-        commentUI.addShow(true, false);
-        commentUI.showComments(data, null, false, true);
-        $(document).trigger('comment', postID);
+    $.get('//api.stackexchange.com/2.2/answers/'+postID+'?site=stackoverflow&key=qhq7Mdy8)4lSXLCjrzQFaQ((', function(aRes) {
+      if (aRes.items.length === 0) {
+        // Post deleted, nothing to do
+        return;
+      }
+      if (aRes.items[0]['user_type'] == 'does_not_exist') {
+        // User deleted, no comment needed
+        return;
+      }
+      if (whichFeedback == 'naa') {
+        // Pick the correct comment to post
+        if (aRes.items[0]['owner']['reputation'] < 50) {
+          whichFeedback = 'naa <50';
+        } else {
+          whichFeedback = 'naa >50';
+        }
+      }
+      var comment = comments[whichFeedback];
+      $.post('//stackoverflow.com/posts/' + postID + '/comments', {'fkey': StackExchange.options.user.fkey, 'comment': comment}, 
+        function(data, textStatus, jqXHR) {
+          var commentUI = StackExchange.comments.uiForPost($('#comments-' + postID));
+          commentUI.addShow(true, false);
+          commentUI.showComments(data, null, false, true);
+          $(document).trigger('comment', postID);
+        });
     });
   }
 
@@ -185,7 +204,7 @@ const ScriptToInject = function() {
       var $dropdown = $('<dl>').css({ 'margin': '0', 'z-index': '1', 'position': 'absolute', 'white-space': 'nowrap', 'background': '#FFF' }).hide();
       $.each(['tp', 'fp', 'ne'], function(i, val) { $dropdown.append($('<dd>').append($('<a>').css({ 'display': 'block', 'width': 'auto' }).click(reportToNatty).text(val))); });
       $dropdown.append($('<hr>').css({'margin-bottom': '6.5px'}));
-      $.each(['link-only', 'naa <50', 'naa >50', 'thanks'], function(i, val) { $dropdown.append($('<dd>').append($('<a>').css({ 'display': 'block', 'width': 'auto' }).click(shortcutClicked).text(val))); });
+      $.each(['link-only', 'naa', 'thanks'], function(i, val) { $dropdown.append($('<dd>').append($('<a>').css({ 'display': 'block', 'width': 'auto' }).click(shortcutClicked).text(val))); });
       $this.append($('<a>').attr('class', 'report-natty-link').html('Natty').hover(function() { $dropdown.toggle(); }).append($dropdown));
     });
   };
