@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Natty Reporter
 // @namespace    https://github.com/Tunaki/stackoverflow-userscripts
-// @version      0.18
+// @version      0.19
 // @description  Adds a Natty link below answers that sends a report for the bot in SOBotics. Intended to be used to give feedback on reports (true positive / false positive / needs edit) or report NAA/VLQ-flaggable answers.
 // @author       Tunaki
 // @include      /^https?:\/\/(www\.)?stackoverflow\.com\/.*/
@@ -143,7 +143,9 @@ const ScriptToInject = function() {
         '(reference this one if it will help provide context). If you\'re interested in this specific question, ' +
         'you can [upvote](//stackoverflow.com/help/privileges/vote-up) it, leave a [comment](//stackoverflow.com/help/privileges/comment), ' +
         'or start a [bounty](//stackoverflow.com/help/privileges/set-bounties) ' +
-        'once you have enough [reputation](//stackoverflow.com/help/whats-reputation).'
+        'once you have enough [reputation](//stackoverflow.com/help/whats-reputation).',
+      'lib':
+        'Please don\'t just post some tool or library as an answer. At least demonstrate [how it solves the problem](http://meta.stackoverflow.com/a/251605) in the answer itself.'
     };
       
     e.preventDefault();
@@ -151,7 +153,7 @@ const ScriptToInject = function() {
     var whichFeedback = $(this).text();
     
     //flag the post (and report to Natty)
-    if (whichFeedback == 'link-only') {
+    if (whichFeedback == 'link-only' || whichFeedback == 'lib') {
       $.post('//stackoverflow.com/flags/posts/' + postID + '/add/PostLowQuality', {'fkey': StackExchange.options.user.fkey, 'otherText': ''},
         function (response) {
           if (!response['Success']) {
@@ -204,7 +206,7 @@ const ScriptToInject = function() {
       var $dropdown = $('<dl>').css({ 'margin': '0', 'z-index': '1', 'position': 'absolute', 'white-space': 'nowrap', 'background': '#FFF' }).hide();
       $.each(['tp', 'fp', 'ne'], function(i, val) { $dropdown.append($('<dd>').append($('<a>').css({ 'display': 'block', 'width': 'auto' }).click(reportToNatty).text(val))); });
       $dropdown.append($('<hr>').css({'margin-bottom': '6.5px'}));
-      $.each(['link-only', 'naa', 'thanks'], function(i, val) { $dropdown.append($('<dd>').append($('<a>').css({ 'display': 'block', 'width': 'auto' }).click(shortcutClicked).text(val))); });
+      $.each(['link-only', 'naa', 'lib', 'thanks'], function(i, val) { $dropdown.append($('<dd>').append($('<a>').css({ 'display': 'block', 'width': 'auto' }).click(shortcutClicked).text(val))); });
       $this.append($('<a>').attr('class', 'report-natty-link').html('Natty').hover(function() { $dropdown.toggle(); }).append($dropdown));
     });
   };
