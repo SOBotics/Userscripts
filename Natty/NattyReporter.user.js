@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Natty Reporter
 // @namespace    https://github.com/Tunaki/stackoverflow-userscripts
-// @version      0.19
+// @version      0.20
 // @description  Adds a Natty link below answers that sends a report for the bot in SOBotics. Intended to be used to give feedback on reports (true positive / false positive / needs edit) or report NAA/VLQ-flaggable answers.
 // @author       Tunaki
 // @include      /^https?:\/\/(www\.)?stackoverflow\.com\/.*/
@@ -33,25 +33,23 @@ function sendChatMessage(msg, answerId) {
 
 function sendSentinelAndChat(answerId, feedback) {
   var link = 'http://stackoverflow.com/a/' + answerId;
-  var match = /(?:https?:\/\/)?(?:www\.)?(.*)\.com\/(.*)(?:\/([0-9]+))?/g.exec(link);
-  var sentinelUrl = 'http://www.' + match[1] + '.com/' + match[2];
   GM_xmlhttpRequest({
     method: 'GET', 
-    url: 'http://sentinel.erwaysoftware.com/api/posts/by_url?key=1e7cb25155eb89910e2f0cb2b3a246ef49a0658bdd014f2b53903e480287deda&url=' + encodeURIComponent(sentinelUrl),
-    onload: function (sentinelResponse) {
-      if (sentinelResponse.status !== 200) {
-        alert('Error while reporting: status ' + sentinelResponse.status);
+    url: 'http://samserver.bhargavrao.com:8000/napi/api/feedback/' + answerId,
+    onload: function (samserverResponse) {
+      if (samserverResponse.status !== 200) {
+        alert('Error while reporting: status ' + samserverResponse.status);
         return;
       }
-      var sentinelJson = JSON.parse(sentinelResponse.responseText);
-      if (sentinelJson.items.length > 0) {
+      var samserverJson = JSON.parse(samserverResponse.responseText);
+      if (samserverJson.items[0] != null) {
         sendChatMessage('@Natty feedback ' + link + ' ' + feedback, answerId);
       } else if (feedback === 'tp') {
         sendChatMessage('@Natty report ' + link, answerId);
       }
     },
-    onerror: function (sentinelResponse) {
-      alert('Error while reporting: ' + sentinelResponse.responseText);
+    onerror: function (samserverResponse) {
+      alert('Error while reporting: ' + samserverResponse.responseText);
     }
   });
 }
