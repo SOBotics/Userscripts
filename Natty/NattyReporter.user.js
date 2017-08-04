@@ -201,10 +201,10 @@ const ScriptToInject = function() {
     $posts.each(function() {
       var $this = $(this);
       $this.append($('<span>').attr('class', 'lsep').html('|'));
-      var $dropdown = $('<dl>').css({ 'margin': '0', 'z-index': '1', 'position': 'absolute', 'white-space': 'nowrap', 'background': '#FFF' }).hide();
-      $.each(['tp', 'fp', 'ne'], function(i, val) { $dropdown.append($('<dd>').append($('<a>').css({ 'display': 'block', 'width': 'auto' }).click(reportToNatty).text(val))); });
+      var $dropdown = $('<dl>').css({ 'margin': '0', 'z-index': '1', 'position': 'absolute', 'white-space': 'nowrap', 'background': '#FFF', 'padding': '2px', 'border': '1px solid #9fa6ad', 'box-shadow': '0 2px 4px rgba(36,39,41,0.3)', 'cursor': 'default' }).hide();
+      $.each(['tp', 'fp', 'ne'], function(i, val) { $dropdown.append($('<dd>').append($('<a>').css({ 'display': 'block', 'margin-top': '3px', 'width': 'auto' }).click(reportToNatty).text(val))); });
       $dropdown.append($('<hr>').css({'margin-bottom': '6.5px'}));
-      $.each(['link-only', 'naa', 'lib', 'thanks'], function(i, val) { $dropdown.append($('<dd>').append($('<a>').css({ 'display': 'block', 'width': 'auto' }).click(shortcutClicked).text(val))); });
+      $.each(['link-only', 'naa', 'lib', 'thanks'], function(i, val) { $dropdown.append($('<dd>').append($('<a>').css({ 'display': 'block', 'margin-top': '3px', 'width': 'auto' }).click(shortcutClicked).text(val))); });
       $this.append($('<a>').attr('class', 'report-natty-link').html('Natty').hover(function() { $dropdown.toggle(); }).append($dropdown));
     });
   };
@@ -244,5 +244,3 @@ document.body.appendChild(ScriptToInjectNode);
 
 const ScriptToInjectContent = document.createTextNode('(' + ScriptToInject.toString() + ')()');
 ScriptToInjectNode.appendChild(ScriptToInjectContent);
-
-
