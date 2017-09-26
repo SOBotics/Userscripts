@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Natty Reporter
 // @namespace    https://github.com/Tunaki/stackoverflow-userscripts
-// @version      0.20
+// @version      0.21
 // @description  Adds a Natty link below answers that sends a report for the bot in SOBotics. Intended to be used to give feedback on reports (true positive / false positive / needs edit) or report NAA/VLQ-flaggable answers.
 // @author       Tunaki
 // @include      /^https?:\/\/(www\.)?stackoverflow\.com\/.*/
@@ -128,11 +128,17 @@ const ScriptToInject = function() {
         'the question or another answer, you can [post a comment](//stackoverflow.com/help/privileges/comment) ' + 
         '(like this one) directly below it. Please remove this answer and create either a comment or a new question. ' +
         'See: [Ask questions, get answers, no distractions](//stackoverflow.com/tour)',
-      'thanks':
+      'thanks <15':
         'Please don\'t add _"thanks"_ as answers. They don\'t actually provide an answer to the question, ' + 
         'and can be perceived as noise by its future visitors. Once you [earn](http://meta.stackoverflow.com/q/146472) ' +
         'enough [reputation](http://stackoverflow.com/help/whats-reputation), you will gain privileges to ' +
         '[upvote answers](http://stackoverflow.com/help/privileges/vote-up) you like. This way future visitors of the question ' +
+        'will see a higher vote count on that answer, and the answerer will also be rewarded with reputation points. ' +
+        'See [Why is voting important](http://stackoverflow.com/help/why-vote).',
+      'thanks >15':
+        'Please don\'t add _"thanks"_ as answers. They don\'t actually provide an answer to the question, ' +
+        'and can be perceived as noise by its future visitors. ' +
+        'Instead, [upvote answers](http://stackoverflow.com/help/privileges/vote-up) you like. This way future visitors of the question ' +
         'will see a higher vote count on that answer, and the answerer will also be rewarded with reputation points. ' +
         'See [Why is voting important](http://stackoverflow.com/help/why-vote).',
       'me too':
@@ -178,6 +184,13 @@ const ScriptToInject = function() {
           whichFeedback = 'naa <50';
         } else {
           whichFeedback = 'naa >50';
+        }
+      }
+      if (whichFeedback == 'thanks') {
+        if (aRes.items[0]['owner']['reputation'] < 15) {
+          whichFeedback = 'thanks <15';
+        } else {
+          whichFeedback = 'thanks >15';
         }
       }
       var comment = comments[whichFeedback];
