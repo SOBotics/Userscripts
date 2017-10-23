@@ -1,6 +1,3 @@
 # Userscripts
 
-A list of useful userscripts to different SOBotic's bots.
-
- - [Generic Bot](/GenericBot)
- - [Natty](/Natty)
+A list of useful userscripts to different SOBotic's bots. [Check them out over here](http://userscripts.sobotics.org/).
