@@ -5,6 +5,8 @@
 // @description  Adds a Natty link below answers that sends a report for the bot in SOBotics. Intended to be used to give feedback on reports (true positive / false positive / needs edit) or report NAA/VLQ-flaggable answers.
 // @author       Tunaki
 // @include      /^https?:\/\/(www\.)?stackoverflow\.com\/.*/
+// @require      https://greasemonkey.github.io/gm4-polyfill/gm4-polyfill.js
+// @grant        GM.xmlHttpRequest
 // @grant        GM_xmlhttpRequest
 // @require      http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
 // @downloadURL  https://github.com/SOBotics/Userscripts/blob/master/Natty/NattyReporter.user.js
@@ -13,12 +15,12 @@
 var room = 111347;
 
 function sendChatMessage(msg, answerId) {
-  GM_xmlhttpRequest({
+  GM.xmlHttpRequest({
     method: 'GET', 
     url: 'http://chat.stackoverflow.com/rooms/' + room, 
     onload: function (response) {
       var fkey = response.responseText.match(/hidden" value="([\dabcdef]{32})/)[1];
-      GM_xmlhttpRequest({
+      GM.xmlHttpRequest({
         method: 'POST',
         url: 'http://chat.stackoverflow.com/chats/' + room + '/messages/new',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -33,7 +35,7 @@ function sendChatMessage(msg, answerId) {
 
 function sendSentinelAndChat(answerId, feedback) {
   var link = 'http://stackoverflow.com/a/' + answerId;
-  GM_xmlhttpRequest({
+  GM.xmlHttpRequest({
     method: 'GET', 
     url: 'http://samserver.bhargavrao.com:8000/napi/api/feedback/' + answerId,
     onload: function (samserverResponse) {
