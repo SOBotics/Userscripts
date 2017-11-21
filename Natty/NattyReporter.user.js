@@ -252,7 +252,7 @@ const ScriptToInject = function() {
   $(document).ready(function() {
     handleAnswers(); 
   });
-}
+};
 
 const ScriptToInjectNode = document.createElement('script');
 document.body.appendChild(ScriptToInjectNode);
