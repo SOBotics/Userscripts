@@ -2,9 +2,17 @@
 
 A list of useful userscripts for the different SOBotics bots.
 
+# Belisarius
+
+ - [Belisarius Controls](https://github.com/SOBotics/Userscripts/blob/master/Belisarius/Belisarius_Controls.user.js) ([install](https://github.com/SOBotics/Userscripts/raw/master/Belisarius/Belisarius_Controls.user.js)) - Tiny Giant, adapted by Baum mit Augen
+
 # Generic Bot
 
  - [flagtracker.user.js](https://github.com/SOBotics/Userscripts/blob/master/GenericBot/flagtracker.user.js) ([install](https://github.com/SOBotics/Userscripts/raw/master/GenericBot/flagtracker.user.js)) - Floern
+
+# Guttenberg
+
+ - [Guttenberg Controls](https://github.com/SOBotics/Userscripts/blob/master/Guttenberg/Guttenberg_Controls.user.js) ([install](https://github.com/SOBotics/Userscripts/raw/master/Guttenberg/Guttenberg_Controls.user.js)) - Tiny Giant, adapted by Baum mit Augen
 
 # Natty
 
