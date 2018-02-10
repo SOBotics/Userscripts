@@ -43,7 +43,7 @@ function sendSentinelAndChat(answerId, feedback) {
   var link = 'https://stackoverflow.com/a/' + answerId;
   GM.xmlHttpRequest({
     method: 'GET', 
-    url: 'http://samserver.bhargavrao.com:8000/napi/api/feedback/' + answerId,
+    url: 'http://logs.sobotics.org/napi/api/feedback/' + answerId,
     onload: function (samserverResponse) {
       if (samserverResponse.status !== 200) {
         alert('Error while reporting: status ' + samserverResponse.status);
