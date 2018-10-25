@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Sentinel Reporter
 // @namespace    https://github.com/SOBotics
-// @version      1.2.0
+// @version      1.2.1
 // @description  Quick feedback to Natty/Sentinel directly from Sentinel's post page
 // @author       Filnor
 // @contributor  geisterfurz007
@@ -73,7 +73,7 @@ function addFeedback(feedback_type = "tp") {
 function addFeedbackButtons(preSelector) {
 	preSelector = preSelector || "";
 	preSelector = preSelector.trim() + " ";
-    $($($("div.col-md-offset-1.col-md-10 a")[0]).parent()).after('<p id="feedback-line"><b>Add feedback:</b> <button type="button" class="fb-button" id="feedback-tp" title="tp - true positive">✔️</button> <button type="button" class="fb-button" id="feedback-fp" title="fp - false positive">❌</a> <button type="button" class="fb-button" id="feedback-ne" title="ne - needs editing">✏️</a></p>');
+    $($($("div.col-md-offset-1.col-md-10 a")[0]).parent()).after('<p id="feedback-line"><b>Add feedback:</b> <button type="button" class="fb-button" id="feedback-tp" title="tp - true positive">✔️</button> <button type="button" class="fb-button" id="feedback-fp" title="fp - false positive">❌</button> <button type="button" class="fb-button" id="feedback-ne" title="ne - needs editing">✏️</button></p>');
 }
 
 function sendChatMessage(msg) {
