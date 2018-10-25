@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Sentinel Reporter
 // @namespace    https://github.com/SOBotics
-// @version      1.1.0
+// @version      1.2.0
 // @description  Quick feedback to Natty/Sentinel directly from Sentinel's post page
 // @author       Filnor
 // @contributor  geisterfurz007
@@ -29,15 +29,20 @@ const feedbackString = "@Natty feedback ";
 		GM.xmlHttpRequest = GM_xmlhttpRequest;
 	}
 
-	GM_addStyle(".sentinel-feedback-tp-icon::after {content: \"✔️\"; cursor: pointer;} .sentinel-feedback-fp-icon::after {content: \"❌\"; cursor: pointer;} /*.comment-Sentinel-feedback-icon dl {display: inline-block} .comment-Sentinel-feedback-icon.Sentinel-popup-closed dl {display:none}*/");
-
-	window.addEventListener("click", ev => {
-        if (ev.target.classList.contains("sentinel-feedback-tp-icon")) {
+    GM_addStyle(".fb-button { background: none; border: 0px solid black; }");
+    
+    window.addEventListener("click", ev => {
+        if (ev.target.id == "feedback-tp") {
             addFeedback();
-        } else if (ev.target.classList.contains("sentinel-feedback-fp-icon")) {
+        } else if (ev.target.id == "feedback-fp") {
             addFeedback("fp");
+        } else if (ev.target.id == "feedback-ne") {
+            addFeedback("ne");
+        } else {
+
         }
     });
+
     addFeedbackButtons();
 })();
 
@@ -62,13 +67,13 @@ function addFeedback(feedback_type = "tp") {
 		onerror: function (samserverResponse) {
 		  alert('Error while reporting: ' + samserverResponse.responseText);
 		}
-		});
+        });
 }
 
 function addFeedbackButtons(preSelector) {
 	preSelector = preSelector || "";
 	preSelector = preSelector.trim() + " ";
-    $($($("div.col-md-offset-1.col-md-10 a")[0]).parent()).after('<p id="feedback-line"><b>Add feedback:</b> <a href="#" title="tp - true positive" class="sentinel-feedback-tp-icon"></a> <a href="#" title="fp - false positive" class="sentinel-feedback-fp-icon"></a> </p>');
+    $($($("div.col-md-offset-1.col-md-10 a")[0]).parent()).after('<p id="feedback-line"><b>Add feedback:</b> <button type="button" class="fb-button" id="feedback-tp" title="tp - true positive">✔️</button> <button type="button" class="fb-button" id="feedback-fp" title="fp - false positive">❌</a> <button type="button" class="fb-button" id="feedback-ne" title="ne - needs editing">✏️</a></p>');
 }
 
 function sendChatMessage(msg) {
