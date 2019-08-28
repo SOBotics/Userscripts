@@ -161,7 +161,7 @@ const ScriptToInject = function() {
     };
       
     e.preventDefault();
-    var postID = $(this).closest('div.post-menu').find('a.short-link').attr('id').split('-')[2];
+    var postID = $(this).closest('div.post-menu').find('a.js-share-link').attr('href').split('/')[2];
     var whichFeedback = $(this).text();
     
     //flag the post (and report to Natty)
