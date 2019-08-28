@@ -110,7 +110,7 @@ const ScriptToInject = function() {
     e.preventDefault();
     var $this = $(this);
     if ($this.closest('a.natty-reported').length > 0) return false;
-    var postId = $this.closest('div.post-menu').find('a.short-link').attr('id').split('-')[2];
+    var postId = $this.closest('div.post-menu').find('a.js-share-link').attr('href').split('/')[2];
     var feedback = $this.text();
     window.postMessage(JSON.stringify(['postHrefReportNatty', postId, feedback]), "*");
   }
