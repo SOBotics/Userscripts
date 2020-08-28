@@ -1,109 +1,68 @@
 // ==UserScript==
 // @name         Sentinel Reporter
 // @namespace    https://github.com/SOBotics
-// @version      1.2.1
-// @description  Quick feedback to Natty/Sentinel directly from Sentinel's post page
+// @version      1.3
+// @description  Quick feedback to Natty directly from Sentinel's post page
 // @author       Filnor
 // @contributor  geisterfurz007
+// @contributor  double-beep
 // @include      https://sentinel.erwaysoftware.com/posts/*
 // @grant        GM_addStyle
 // @grant        GM_xmlhttpRequest
-// @downloadURL  https://github.com/SOBotics/Userscripts/SentinelReporter/raw/master/SentinelReporter.user.js
+// @downloadURL  https://github.com/SOBotics/Userscripts/raw/master/Natty/SentinelReporter.user.js
+// @updateURL    https://github.com/SOBotics/Userscripts/raw/master/Natty/SentinelReporter.user.js
 // ==/UserScript==
 
-const room = 111347;
-const test_room = 167908;
-const sebotics = 54445;
-
-const feedbackString = "@Natty feedback ";
-
 (function() {
+  "use strict";
 
-	'use strict';
+  const soboticsRoomId = 111347;
+  const seboticsRoomId = 54445;
+  const getFeedbackString = (postUrl, feedbackType) => `@Natty feedback ${postUrl} ${feedbackType}`;
 
-	if (typeof GM !== 'object') {
-		GM = {};
-	}
+  const isAskUbuntuPost = !!document.querySelector("h3 a").href.match(/^https?:\/\/(www\.)?askubuntu/);
+  const answerUrl = document.querySelector("h3 a").href;
+  const answerId = answerUrl.split("/")[4];
+  const chatHost = `chat.${isAskUbuntuPost ? "stackexchange" : "stackoverflow"}.com`, roomId = isAskUbuntuPost ? seboticsRoomId : soboticsRoomId
+  const postChatUrl = `https://${chatHost}/chats/${roomId}/messages/new`, chatRoomUrl = `https://${chatHost}/rooms/${roomId}`;
+  const feedbackButtonsHtml = `<p id="feedback-line"><b>Add feedback:</b> <button type="button" class="fb-button" id="feedback-tp" title="tp - true positive">✔️</button>
+                               <button type="button" class="fb-button" id="feedback-fp" title="fp - false positive">❌</button>
+                               <button type="button" class="fb-button" id="feedback-ne" title="ne - needs editing">✏️</button></p>`
+  GM_addStyle(".fb-button { background: none; border: 0px solid black; }");
 
-	if (typeof GM_xmlhttpRequest === 'function' && !GM.xmlHttpRequest) {
-		GM.xmlHttpRequest = GM_xmlhttpRequest;
-	}
-
-    GM_addStyle(".fb-button { background: none; border: 0px solid black; }");
-    
-    window.addEventListener("click", ev => {
-        if (ev.target.id == "feedback-tp") {
-            addFeedback();
-        } else if (ev.target.id == "feedback-fp") {
-            addFeedback("fp");
-        } else if (ev.target.id == "feedback-ne") {
-            addFeedback("ne");
-        } else {
-
-        }
+  function sendChatMessage(fkey, messageToSend) {
+    GM_xmlhttpRequest({
+      method: "POST",
+      url: postChatUrl,
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      data: `text=${encodeURIComponent(messageToSend)}&fkey=${fkey}`,
+      onerror: function(error) {
+        alert("Error while trying to send chat message: " + error);
+        console.error(error);
+      }
     });
+  }
 
-    addFeedbackButtons();
-})();
+  function getFkeyFromChatAndSendMessage(message) {
+    GM_xmlhttpRequest({
+      method: "GET",
+      url: chatRoomUrl,
+      onload: function (response) {
+        const fkey = response.responseText.match(/hidden" value="([\dabcdef]{32})/)[1];
+        sendChatMessage(fkey, message);
+      },
+      onerror: function(error) {
+        alert("Error while trying to fetch fkey from chat: " + error);
+        console.error(error);
+      }
+    });
+  }
 
-function addFeedback(feedback_type = "tp") {
-	//Get post's URL
-	var answerUrl = $("div.col-md-offset-1.col-md-10 a").attr("href");
-	var index = answerUrl.lastIndexOf("/");
-	var answerId = answerUrl.substring(index + 1);
-
-
-	GM.xmlHttpRequest({
-		method: 'GET', 
-		url: 'http://logs.sobotics.org/napi/api/feedback/' + answerId + (isAUFeedback() ? '/au' : ''),
-		onload: function (samserverResponse) {
-		  if (samserverResponse.status !== 200) {
-				alert('Error while reporting: status ' + samserverResponse.status);
-				return;
-		  }
-			sendChatMessage(`${feedbackString} ${answerUrl} ${feedback_type}`);
-			$("#feedback-line").html("Feedback sent.");
-		},
-		onerror: function (samserverResponse) {
-		  alert('Error while reporting: ' + samserverResponse.responseText);
-		}
-        });
-}
-
-function addFeedbackButtons(preSelector) {
-	preSelector = preSelector || "";
-	preSelector = preSelector.trim() + " ";
-    $($($("div.col-md-offset-1.col-md-10 a")[0]).parent()).after('<p id="feedback-line"><b>Add feedback:</b> <button type="button" class="fb-button" id="feedback-tp" title="tp - true positive">✔️</button> <button type="button" class="fb-button" id="feedback-fp" title="fp - false positive">❌</button> <button type="button" class="fb-button" id="feedback-ne" title="ne - needs editing">✏️</button></p>');
-}
-
-function sendChatMessage(msg) {
-  var roomURL = getChatRequestURL('rooms');
-  GM.xmlHttpRequest({
-    method: 'GET',
-    url: roomURL,
-    onload: function (response) {
-      var fkey = response.responseText.match(/hidden" value="([\dabcdef]{32})/)[1];
-      GM.xmlHttpRequest({
-        method: 'POST',
-        url: getChatRequestURL('chats') + '/messages/new',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        data: 'text=' + encodeURIComponent(msg.trim()) + '&fkey=' + fkey,
-        onload: function (r) {
-        }
-      });
-    }
+  document.querySelector("h3").insertAdjacentHTML('afterend', feedbackButtonsHtml); // insert buttons
+  [...document.querySelectorAll(".fb-button")].forEach(el => {
+    el.addEventListener("click", function() {
+      getFkeyFromChatAndSendMessage(getFeedbackString(answerUrl, el.id.split("-")[1]));
+      document.querySelector("#feedback-line").innerHTML = "Feedback sent.";
+    });
   });
-}
-
-function isAUFeedback() {
-   return !!$("h3 a").attr("href").match(/https?:\/\/(www\.)?askubuntu.*/);
-}
-
-function getChatRequestURL(apiTarget) {
-    var auFeedback = isAUFeedback();
-    var result = 'https://chat.';
-    result += auFeedback ? 'stackexchange' : 'stackoverflow';
-    result += '.com/' + apiTarget + '/';
-    result += auFeedback ? sebotics : room;
-    return result;
-}
+})();
