@@ -1,14 +1,13 @@
 // ==UserScript==
-// @name        Guttenberg Controls
-// @namespace   http://tinygiant.io
-// @description Adds quick links for [k|f] to Guttenberg reports.
-// @author      TinyGiant
-// @contributor double-beep
+// @name        Queen Controls
+// @namespace   https://github.com/SOBotics
+// @description Adds quick links for [tp|fp|nc|sk] to Queen reports.
+// @author      double-beep
 // @include     https://chat.stackoverflow.com/rooms/111347/*
 // @include     https://chat.stackoverflow.com/rooms/167908/*
 // @version     1.0.2
-// @downloadURL https://github.com/SOBotics/Userscripts/raw/master/Guttenberg/Guttenberg_Controls.user.js
-// @updateURL   https://github.com/SOBotics/Userscripts/raw/master/Guttenberg/Guttenberg_Controls.user.js
+// @downloadURL https://github.com/SOBotics/Userscripts/raw/master/Queen/Queen_Controls.user.js
+// @updateURL   https://github.com/SOBotics/Userscripts/raw/master/Queen/Queen_Controls.user.js
 // @run-at      document-end
 // @grant       none
 // ==/UserScript==
@@ -16,10 +15,11 @@
 /* globals CHAT */
 
 (function() {
-  const guttenbergUserId = 7418352;
-  const phraseToCheck = 'is possible plagiarism of';
+  const queenUserId = 6294609;
+  const phraseToCheck = 'SCORE';
   const currentRoomId = CHAT.CURRENT_ROOM_ID;
-  const buttonsHtml = `<span class="gut-controls-buttons"> [ <a class="gut-k" href="#">k</a> | <a class="gut-f" href="#">f</a> ] </span>`;
+  const buttonsHtml = `<span class="que-controls-buttons"> [ <a class="que-tp" href="#">tp</a> | <a class="que-fp" href="#">fp</a>
+                       | <a class="que-nc" href="#">nc</a> | <a class="que-sk" href="#">sk</a> ] </span>`;
   const generateReply = (toReplyId, text) => `:${toReplyId} ${text}`;
   const chatFkey = window.fkey().fkey;
   const chatHost = window.location.host;
@@ -50,15 +50,15 @@
   }
 
   function decorateNotDecoratedMessages() {
-    [...document.querySelectorAll(`.user-${guttenbergUserId}.monologue .message .content`)].forEach(el => {
-      if (!el.innerHTML.match(phraseToCheck) || el.children[0].classList.contains('gut-controls-buttons')) return;
+    [...document.querySelectorAll(`.user-${queenUserId}.monologue .message .content`)].forEach(el => {
+      if (!el.innerHTML.match(phraseToCheck) || el.children[0].classList.contains('que-controls-buttons')) return;
       decorateChatMessage(el);
     });
   }
 
   function newChatEventOccured(event) {
-    // Event should happen in the current room, it should be a new message (type 1) or an edit (type 2), by Guttenberg (userId 7418352). It should be a report.
-    if (event.room_id == currentRoomId && event.event_type < 2 && event.user_id == guttenbergUserId && event.content.match(phraseToCheck)) {
+    // Event should happen in the current room, it should be a new message (type 1) or an edit (type 2), by Queen (userId 6294609). It should be a report.
+    if (event.room_id == currentRoomId && event.event_type < 2 && event.user_id == queenUserId && event.content.match(phraseToCheck)) {
       setTimeout(() => decorateChatMessage(document.querySelector(`#message-${event.message_id} .content`)), 0); // hacky setTimeout; element is not found otherwise
     }
   }
