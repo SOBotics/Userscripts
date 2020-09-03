@@ -6,7 +6,7 @@
 // @contributor double-beep
 // @include     https://chat.stackoverflow.com/rooms/111347/*
 // @include     https://chat.stackoverflow.com/rooms/167908/*
-// @version     1.0.2
+// @version     1.0.3
 // @downloadURL https://github.com/SOBotics/Userscripts/raw/master/Guttenberg/Guttenberg_Controls.user.js
 // @updateURL   https://github.com/SOBotics/Userscripts/raw/master/Guttenberg/Guttenberg_Controls.user.js
 // @run-at      document-end
@@ -17,7 +17,7 @@
 
 (function() {
   const guttenbergUserId = 7418352;
-  const phraseToCheck = 'is possible plagiarism of';
+  const phraseToCheck = 'is possible';
   const currentRoomId = CHAT.CURRENT_ROOM_ID;
   const buttonsHtml = `<span class="gut-controls-buttons"> [ <a class="gut-k" href="#">k</a> | <a class="gut-f" href="#">f</a> ] </span>`;
   const generateReply = (toReplyId, text) => `:${toReplyId} ${text}`;
