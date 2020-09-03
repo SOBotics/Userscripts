@@ -8,7 +8,8 @@ A list of useful userscripts for the different SOBotics bots.
 
 # Generic Bot
 
- - [flagtracker.user.js](https://github.com/SOBotics/Userscripts/blob/master/GenericBot/flagtracker.user.js) ([install](https://github.com/SOBotics/Userscripts/raw/master/GenericBot/flagtracker.user.js)) - Floern
+ - [Stack Exchange Flag Tracker](https://github.com/SOBotics/Userscripts/blob/master/GenericBot/flagtracker.user.js) ([install](https://github.com/SOBotics/Userscripts/raw/master/GenericBot/flagtracker.user.js)) - Floern
+ - [GenericBot Controls](https://github.com/SOBotics/Userscripts/blob/master/GenericBot/GenericBot_controls.user.js) ([install](https://github.com/SOBotics/Userscripts/raw/master/GenericBot/GenericBot_Controls.user.js)) - double-beep
 
 # Guttenberg
 
