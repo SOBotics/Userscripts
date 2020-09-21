@@ -2,9 +2,10 @@
 
 ## Userscripts
 
- - [Flag Tracker](https://github.com/Floern/stackoverflow/blob/master/userscripts/flagtracker.user.js)
+ - [Flag Tracker](https://github.com/SOBotics/Userscripts/blob/master/GenericBot/flagtracker.user.js)
+ - [GenericBot controls](https://github.com/SOBotics/Userscripts/blob/master/GenericBot/GenericBot_controls.user.js)
 
 ## Stackapps
 
- - [Generic Bot – A Moderation Chatbot – on stackapps.com](https://stackapps.com/q/7337/37543)
+ - [Generic Bot – A Moderation Chatbot – on stackapps.com](https://stackapps.com/q/7337)
  

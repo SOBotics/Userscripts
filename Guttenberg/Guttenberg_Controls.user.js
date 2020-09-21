@@ -2,87 +2,77 @@
 // @name        Guttenberg Controls
 // @namespace   http://tinygiant.io
 // @description Adds quick links for [k|f] to Guttenberg reports.
-// @include     http*://chat.stackoverflow.com/rooms/111347/sobotics
-// @version     1.0.1
+// @author      TinyGiant
+// @contributor double-beep
+// @include     https://chat.stackoverflow.com/rooms/111347/*
+// @include     https://chat.stackoverflow.com/rooms/167908/*
+// @version     1.0.3
+// @downloadURL https://github.com/SOBotics/Userscripts/raw/master/Guttenberg/Guttenberg_Controls.user.js
+// @updateURL   https://github.com/SOBotics/Userscripts/raw/master/Guttenberg/Guttenberg_Controls.user.js
+// @run-at      document-end
 // @grant       none
 // ==/UserScript==
-/* jshint esnext: true */
+/* jshint esversion: 6 */
+/* globals CHAT */
 
-function GuttenbergControls() {
-    const ready = CHAT.Hub.roomReady;
+(function() {
+  const guttenbergUserId = 7418352;
+  const phraseToCheck = 'is possible';
+  const currentRoomId = CHAT.CURRENT_ROOM_ID;
+  const buttonsHtml = `<span class="gut-controls-buttons"> [ <a class="gut-k" href="#">k</a> | <a class="gut-f" href="#">f</a> ] </span>`;
+  const generateReply = (toReplyId, text) => `:${toReplyId} ${text}`;
+  const chatFkey = window.fkey().fkey;
+  const chatHost = window.location.host;
 
-    CHAT.Hub.roomReady = {
-        fire: function(...args) {
-            ready.fire(...args);
+  async function sendMessageToChat(messageText) {
+    const parameters = new FormData();
+    parameters.append('text', messageText);
+    parameters.append('fkey', chatFkey);
+    await fetch(`https://${chatHost}/chats/${currentRoomId}/messages/new`, {
+      method: 'POST',
+      body: parameters
+    });
+  }
 
-            function eventHandler(event) {
-                if(event.room_id !== CHAT.CURRENT_ROOM_ID || // event is not in this room
-                   event.event_type !== 1                   || // event is not a message
-                   event.user_id !== 7418352) return;        // event is not from Guttenberg
+  function getMessageIdFromElement(element) {
+    return element.parentElement.parentElement.parentElement.id.split('-')[1];
+  }
 
-                const content = document.createElement('div');
-                content.innerHTML = event.content;
+  function decorateChatMessage(messageContentElement) {
+    messageContentElement.insertAdjacentHTML('afterbegin', buttonsHtml);
+    [...messageContentElement.children[0].children].forEach(el => {
+      el.addEventListener('click', function(e) {
+        e.preventDefault();
+        const messageId = getMessageIdFromElement(el);
+        sendMessageToChat(generateReply(messageId, el.className.split('-')[1]))
+      });
+    });
+  }
 
-                if(!/^\[ Guttenberg/.test(content.textContent.trim())) return; // event is not a report
+  function decorateNotDecoratedMessages() {
+    [...document.querySelectorAll(`.user-${guttenbergUserId}.monologue .message .content`)].forEach(el => {
+      if (!el.innerHTML.match(phraseToCheck) || el.children[0].classList.contains('gut-controls-buttons')) return;
+      decorateChatMessage(el);
+    });
+  }
 
-                function send(message) {
-                    $.ajax({
-                        'type': 'POST',
-                        'url': `/chats/${CHAT.CURRENT_ROOM_ID}/messages/new`,
-                        'data': fkey({text: message}),
-                        'dataType': 'json'
-                    });
-                }
+  function newChatEventOccured(event) {
+    // Event should happen in the current room, it should be a new message (type 1) or an edit (type 2), by Guttenberg (userId 7418352). It should be a report.
+    if (event.room_id == currentRoomId && event.event_type < 2 && event.user_id == guttenbergUserId && event.content.match(phraseToCheck)) {
+      setTimeout(() => decorateChatMessage(document.querySelector(`#message-${event.message_id} .content`)), 0); // hacky setTimeout; element is not found otherwise
+    }
+  }
 
-                function clickHandler(message) {
-                    return function(event) {
-                        event.preventDefault();
+  function init() {
+    decorateNotDecoratedMessages();
+    CHAT.addEventHandlerHook(newChatEventOccured);
+  }
 
-                        send(message);
-                    };
-                }
-
-                function createLink(message) {
-                    const node = document.createElement('a');
-                    node.href = "#";
-                    node.textContent = message;
-                    node.addEventListener('click', clickHandler(`:${event.message_id} ${message}`), false);
-                    return node;
-                }
-
-                setTimeout(() => {
-                    const message = document.querySelector(`#message-${event.message_id} .content`);
-
-                    const wrap = document.createElement('span');
-                    wrap.appendChild(document.createTextNode(' [ '));
-                    wrap.appendChild(createLink('k'));
-                    wrap.appendChild(document.createTextNode(' | '));
-                    wrap.appendChild(createLink('f'));
-                    wrap.appendChild(document.createTextNode(' ] '));
-                    message.insertBefore(wrap, message.firstChild);
-                }, 0);
-            }
-
-            function handleLoadedEvents(handler) {
-                [...(document.querySelectorAll('.user-container') || [])].forEach(container => {
-                    [...(container.querySelectorAll('.message') || [])].forEach(message => handler({
-                        room_id: CHAT.CURRENT_ROOM_ID,
-                        event_type: 1,
-                        user_id: +(container.className.match(/user-(\d+)/) || [])[1],
-                        message_id: +(message.id.match(/message-(\d+)/) || [])[1],
-                        content: message.querySelector('.content').innerHTML
-                    }));
-                });
-            }
-
-            CHAT.addEventHandlerHook(eventHandler);
-
-            handleLoadedEvents(eventHandler);
-        }
-    };
-}
-
-const script = document.createElement('script');
-script.textContent = `(${ GuttenbergControls.toString() })();`;
-console.log(script.textContent);
-document.body.appendChild(script);
+  const ready = CHAT.Hub.roomReady;
+  CHAT.Hub.roomReady = {
+    fire: function(...args) {
+      ready.fire(...args);
+      init(); // chat page loaded
+    }
+  }
+})();
