@@ -32,7 +32,7 @@ function sendChatMessage(msg, answerId) {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         data: 'text=' + encodeURIComponent(msg) + '&fkey=' + fkey,
         onload: function (r) {
-          $('[data-answerid="' + answerId + '"] a.report-natty-link').addClass('natty-reported').html('Reported to Natty!');
+          $('[data-answerid="' + answerId + '"] a.report-natty-link').addClass('natty-reported').html('reported!');
         }
       });
     }
@@ -84,11 +84,11 @@ function sendRequest(event) {
             if (Math.round((answerDate - questionDate) / (24 * 60 * 60)) >= 30) {
               sendSentinelAndChat(messageJSON[1], messageJSON[2]);
             } else {
-                $('[data-answerid="' + messageJSON[1] + '"] a.report-natty-link').addClass('natty-reported').html('Not a late answer.');
+                $('[data-answerid="' + messageJSON[1] + '"] a.report-natty-link').addClass('natty-reported').html('not a late answer');
             }
           });
         } else {
-            $('[data-answerid="' + messageJSON[1] + '"] a.report-natty-link').addClass('natty-reported').html('Answer too old.');
+            $('[data-answerid="' + messageJSON[1] + '"] a.report-natty-link').addClass('natty-reported').html('answer too old');
         }
       }
     });
@@ -221,12 +221,14 @@ const ScriptToInject = function() {
     }
     $posts.each(function() {
       var $this = $(this);
-      $this.append($('<span>').attr('class', 'lsep').html('|'));
+      $this.append(' ');
       var $dropdown = $('<dl>').css({ 'margin': '0', 'z-index': '1', 'position': 'absolute', 'white-space': 'nowrap', 'background': '#FFF', 'padding': '2px', 'border': '1px solid #9fa6ad', 'box-shadow': '0 2px 4px rgba(36,39,41,0.3)', 'cursor': 'default' }).hide();
       $.each(['tp', 'fp', 'ne'], function(i, val) { $dropdown.append($('<dd>').append($('<a>').css({ 'display': 'block', 'margin-top': '3px', 'width': 'auto' }).click(reportToNatty).text(val))); });
       $dropdown.append($('<hr>').css({'margin-bottom': '6.5px'}));
       $.each(['link-only', 'naa', 'lib', 'thanks'], function(i, val) { $dropdown.append($('<dd>').append($('<a>').css({ 'display': 'block', 'margin-top': '3px', 'width': 'auto' }).click(shortcutClicked).text(val))); });
-      $this.append($('<a>').attr('class', 'report-natty-link').html('Natty').hover(function() { $dropdown.toggle(); }).append($dropdown));
+      $this.append($('<a>').attr('class', 'report-natty-link').html('natty').hover(function() { $dropdown.toggle(); }).append($dropdown));
+      $this.append(' ');
+      $this.append($('<span>').attr('class', 'lsep').html('|'));
     });
   };
 
