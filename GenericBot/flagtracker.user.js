@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Stack Exchange Flag Tracker
 // @namespace     https://so.floern.com/
-// @version       1.2
+// @version       1.2.1
 // @description   Tracks flagged posts on Stack Exchange.
 // @author        Floern
 // @contributor   double-beep
