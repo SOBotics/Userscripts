@@ -105,7 +105,7 @@ const ScriptToInject = function() {
       open.apply(this, arguments);
     };
   };
-  
+
   function reportToNatty(e) {
     e.preventDefault();
     var $this = $(this);
@@ -114,9 +114,9 @@ const ScriptToInject = function() {
     var feedback = $this.text();
     window.postMessage(JSON.stringify(['postHrefReportNatty', postId, feedback]), "*");
   }
-    
+
   function shortcutClicked(e) {
-    
+
     var comments = {
       'link-only':
         'A link to a solution is welcome, but please ensure your answer is useful without it: ' + 
@@ -159,11 +159,11 @@ const ScriptToInject = function() {
       'lib':
         'Please don\'t just post some tool or library as an answer. At least demonstrate [how it solves the problem](http://meta.stackoverflow.com/a/251605) in the answer itself.'
     };
-      
+
     e.preventDefault();
     var postID = $(this).closest('div.post-menu').find('a.js-share-link').attr('href').split('/')[2];
     var whichFeedback = $(this).text();
-    
+
     //flag the post (and report to Natty)
     if (whichFeedback == 'link-only' || whichFeedback == 'lib') {
       $.post('//stackoverflow.com/flags/posts/' + postID + '/add/PostLowQuality', {'fkey': StackExchange.options.user.fkey, 'otherText': ''},
@@ -212,6 +212,15 @@ const ScriptToInject = function() {
     });
   }
 
+  function createDropDownOption(text, onClick) {
+    return $('<dd>').append(
+      $('<a>').text(text)
+        .css({ 'display': 'block', 'margin-top': '3px', 'padding': '0px 3px', 'width': 'auto' })
+        .hover(function(){$(this).css({ 'background': '#eff0f1' });}, function(){$(this).css({ 'background': 'transparent' })})
+        .click(onClick)
+    );
+  }
+
   function handleAnswers(postId) {
     var $posts;
     if(!postId) {
@@ -222,10 +231,10 @@ const ScriptToInject = function() {
     $posts.each(function() {
       var $this = $(this);
       $this.append(' ');
-      var $dropdown = $('<dl>').css({ 'margin': '0', 'z-index': '1', 'position': 'absolute', 'white-space': 'nowrap', 'background': '#FFF', 'padding': '2px', 'border': '1px solid #9fa6ad', 'box-shadow': '0 2px 4px rgba(36,39,41,0.3)', 'cursor': 'default' }).hide();
-      $.each(['tp', 'fp', 'ne'], function(i, val) { $dropdown.append($('<dd>').append($('<a>').css({ 'display': 'block', 'margin-top': '3px', 'width': 'auto' }).click(reportToNatty).text(val))); });
+      var $dropdown = $('<dl>').css({ 'margin': '0', 'margin-left': '-5px', 'z-index': '1', 'position': 'absolute', 'white-space': 'nowrap', 'background': '#FFF', 'padding': '2px', 'border': '1px solid #9fa6ad', 'box-shadow': '0 2px 4px rgba(36,39,41,0.3)', 'cursor': 'default' }).hide();
+      $.each(['tp', 'fp', 'ne'], function(i, val) { $dropdown.append(createDropDownOption(val, reportToNatty)); });
       $dropdown.append($('<hr>').css({'margin-bottom': '6.5px'}));
-      $.each(['link-only', 'naa', 'lib', 'thanks'], function(i, val) { $dropdown.append($('<dd>').append($('<a>').css({ 'display': 'block', 'margin-top': '3px', 'width': 'auto' }).click(shortcutClicked).text(val))); });
+      $.each(['link-only', 'naa', 'lib', 'thanks'], function(i, val) { $dropdown.append(createDropDownOption(val, shortcutClicked)); });
       $this.append($('<a>').attr('class', 'report-natty-link').html('natty').hover(function() { $dropdown.toggle(); }).append($dropdown));
       $this.append(' ');
       $this.append($('<span>').attr('class', 'lsep').html('|'));
@@ -240,7 +249,7 @@ const ScriptToInject = function() {
       }
     }
   });
-  
+
   //Flags
   addXHRListener(function(xhr) {
     let matches = /flags\/posts\/(\d+)\/add\/(AnswerNotAnAnswer|PostLowQuality)/.exec(xhr.responseURL);
@@ -248,7 +257,7 @@ const ScriptToInject = function() {
       window.postMessage(JSON.stringify(['postHrefReportNatty', matches[1], 'tp']), "*");
     }
   });
-  
+
   //LQPRQ
   addXHRListener(function(xhr) {
     let matches = /(\d+)\/recommend-delete/.exec(xhr.responseURL);
@@ -258,7 +267,7 @@ const ScriptToInject = function() {
   });
 
   $(document).ready(function() {
-    handleAnswers(); 
+    handleAnswers();
   });
 };
 
