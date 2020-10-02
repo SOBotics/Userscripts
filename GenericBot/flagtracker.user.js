@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Stack Exchange Flag Tracker
 // @namespace     https://so.floern.com/
-// @version       1.2
+// @version       1.2.1
 // @description   Tracks flagged posts on Stack Exchange.
 // @author        Floern
 // @contributor   double-beep
@@ -27,7 +27,7 @@
   const myProfileElement = document.querySelector('.my-profile .gravatar-wrapper-24');
   const flaggername = myProfileElement ? myProfileElement.title : null;
   const sitename = window.location.hostname;
-  const lsepSpanHtml = '<span class="lsep">|</span>';
+  const lsepSpanHtml = ' <span class="lsep">|</span>';
   const flagTrackerButtonHtml = '<a class="flag-tracker-link" title="register this post to be tracked">track</a>';
 
   function computeContentHash(postContent) {
@@ -83,8 +83,9 @@
   function handlePosts() {
     [...document.querySelectorAll('.post-layout .post-menu')].forEach(element => {
       if (element.innerText.match('track')) return; // element already exists
-      element.insertAdjacentHTML('beforeend', lsepSpanHtml);
+      element.insertAdjacentHTML('beforeend', ' ');
       element.insertAdjacentHTML('beforeend', flagTrackerButtonHtml);
+      element.insertAdjacentHTML('beforeend', lsepSpanHtml);
       element.querySelector('.flag-tracker-link').addEventListener('click', () => trackFlag(element));
     });
   }

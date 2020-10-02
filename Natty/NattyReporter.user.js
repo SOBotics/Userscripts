@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Natty Reporter
 // @namespace    https://github.com/Tunaki/stackoverflow-userscripts
-// @version      0.25
+// @version      0.26
 // @description  Adds a Natty link below answers that sends a report for the bot in SOBotics. Intended to be used to give feedback on reports (true positive / false positive / needs edit) or report NAA/VLQ-flaggable answers.
 // @author       Tunaki
 // @include      /^https?:\/\/(www\.)?stackoverflow\.com\/.*/
@@ -32,7 +32,7 @@ function sendChatMessage(msg, answerId) {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         data: 'text=' + encodeURIComponent(msg) + '&fkey=' + fkey,
         onload: function (r) {
-          $('[data-answerid="' + answerId + '"] a.report-natty-link').addClass('natty-reported').html('Reported to Natty!');
+          $('[data-answerid="' + answerId + '"] a.report-natty-link').addClass('natty-reported').html('reported!');
         }
       });
     }
@@ -84,11 +84,11 @@ function sendRequest(event) {
             if (Math.round((answerDate - questionDate) / (24 * 60 * 60)) >= 30) {
               sendSentinelAndChat(messageJSON[1], messageJSON[2]);
             } else {
-                $('[data-answerid="' + messageJSON[1] + '"] a.report-natty-link').addClass('natty-reported').html('Not a late answer.');
+                $('[data-answerid="' + messageJSON[1] + '"] a.report-natty-link').addClass('natty-reported').html('not a late answer');
             }
           });
         } else {
-            $('[data-answerid="' + messageJSON[1] + '"] a.report-natty-link').addClass('natty-reported').html('Answer too old.');
+            $('[data-answerid="' + messageJSON[1] + '"] a.report-natty-link').addClass('natty-reported').html('answer too old');
         }
       }
     });
@@ -105,7 +105,7 @@ const ScriptToInject = function() {
       open.apply(this, arguments);
     };
   };
-  
+
   function reportToNatty(e) {
     e.preventDefault();
     var $this = $(this);
@@ -114,9 +114,9 @@ const ScriptToInject = function() {
     var feedback = $this.text();
     window.postMessage(JSON.stringify(['postHrefReportNatty', postId, feedback]), "*");
   }
-    
+
   function shortcutClicked(e) {
-    
+
     var comments = {
       'link-only':
         'A link to a solution is welcome, but please ensure your answer is useful without it: ' + 
@@ -159,11 +159,11 @@ const ScriptToInject = function() {
       'lib':
         'Please don\'t just post some tool or library as an answer. At least demonstrate [how it solves the problem](http://meta.stackoverflow.com/a/251605) in the answer itself.'
     };
-      
+
     e.preventDefault();
     var postID = $(this).closest('div.post-menu').find('a.js-share-link').attr('href').split('/')[2];
     var whichFeedback = $(this).text();
-    
+
     //flag the post (and report to Natty)
     if (whichFeedback == 'link-only' || whichFeedback == 'lib') {
       $.post('//stackoverflow.com/flags/posts/' + postID + '/add/PostLowQuality', {'fkey': StackExchange.options.user.fkey, 'otherText': ''},
@@ -212,6 +212,15 @@ const ScriptToInject = function() {
     });
   }
 
+  function createDropDownOption(text, onClick) {
+    return $('<dd>').append(
+      $('<a>').text(text)
+        .css({ 'display': 'block', 'margin-top': '3px', 'padding': '0px 3px', 'width': 'auto' })
+        .hover(function(){$(this).css({ 'background': '#eff0f1' });}, function(){$(this).css({ 'background': 'transparent' })})
+        .click(onClick)
+    );
+  }
+
   function handleAnswers(postId) {
     var $posts;
     if(!postId) {
@@ -221,12 +230,14 @@ const ScriptToInject = function() {
     }
     $posts.each(function() {
       var $this = $(this);
-      $this.append($('<span>').attr('class', 'lsep').html('|'));
-      var $dropdown = $('<dl>').css({ 'margin': '0', 'z-index': '1', 'position': 'absolute', 'white-space': 'nowrap', 'background': '#FFF', 'padding': '2px', 'border': '1px solid #9fa6ad', 'box-shadow': '0 2px 4px rgba(36,39,41,0.3)', 'cursor': 'default' }).hide();
-      $.each(['tp', 'fp', 'ne'], function(i, val) { $dropdown.append($('<dd>').append($('<a>').css({ 'display': 'block', 'margin-top': '3px', 'width': 'auto' }).click(reportToNatty).text(val))); });
+      $this.append(' ');
+      var $dropdown = $('<dl>').css({ 'margin': '0', 'margin-left': '-5px', 'z-index': '1', 'position': 'absolute', 'white-space': 'nowrap', 'background': '#FFF', 'padding': '2px', 'border': '1px solid #9fa6ad', 'box-shadow': '0 2px 4px rgba(36,39,41,0.3)', 'cursor': 'default' }).hide();
+      $.each(['tp', 'fp', 'ne'], function(i, val) { $dropdown.append(createDropDownOption(val, reportToNatty)); });
       $dropdown.append($('<hr>').css({'margin-bottom': '6.5px'}));
-      $.each(['link-only', 'naa', 'lib', 'thanks'], function(i, val) { $dropdown.append($('<dd>').append($('<a>').css({ 'display': 'block', 'margin-top': '3px', 'width': 'auto' }).click(shortcutClicked).text(val))); });
-      $this.append($('<a>').attr('class', 'report-natty-link').html('Natty').hover(function() { $dropdown.toggle(); }).append($dropdown));
+      $.each(['link-only', 'naa', 'lib', 'thanks'], function(i, val) { $dropdown.append(createDropDownOption(val, shortcutClicked)); });
+      $this.append($('<a>').attr('class', 'report-natty-link').html('natty').hover(function() { $dropdown.toggle(); }).append($dropdown));
+      $this.append(' ');
+      $this.append($('<span>').attr('class', 'lsep').html('|'));
     });
   };
 
@@ -238,7 +249,7 @@ const ScriptToInject = function() {
       }
     }
   });
-  
+
   //Flags
   addXHRListener(function(xhr) {
     let matches = /flags\/posts\/(\d+)\/add\/(AnswerNotAnAnswer|PostLowQuality)/.exec(xhr.responseURL);
@@ -246,7 +257,7 @@ const ScriptToInject = function() {
       window.postMessage(JSON.stringify(['postHrefReportNatty', matches[1], 'tp']), "*");
     }
   });
-  
+
   //LQPRQ
   addXHRListener(function(xhr) {
     let matches = /(\d+)\/recommend-delete/.exec(xhr.responseURL);
@@ -256,7 +267,7 @@ const ScriptToInject = function() {
   });
 
   $(document).ready(function() {
-    handleAnswers(); 
+    handleAnswers();
   });
 };
 
