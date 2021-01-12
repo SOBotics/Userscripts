@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Stack Exchange Flag Tracker
 // @namespace     https://so.floern.com/
-// @version       1.3
+// @version       1.4
 // @description   Tracks flagged posts on Stack Exchange.
 // @author        Floern
 // @contributor   double-beep
@@ -12,6 +12,7 @@
 // @match         *://*.askubuntu.com/*/*
 // @match         *://*.stackapps.com/*/*
 // @match         *://*.mathoverflow.net/*/*
+// @exclude       *://chat.*
 // @connect       so.floern.com
 // @require       https://greasemonkey.github.io/gm4-polyfill/gm4-polyfill.js
 // @grant         GM.xmlHttpRequest
