@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Stack Exchange Flag Tracker
 // @namespace     https://so.floern.com/
-// @version       1.2.1
+// @version       1.3
 // @description   Tracks flagged posts on Stack Exchange.
 // @author        Floern
 // @contributor   double-beep
@@ -27,8 +27,9 @@
   const myProfileElement = document.querySelector('.my-profile .gravatar-wrapper-24');
   const flaggername = myProfileElement ? myProfileElement.title : null;
   const sitename = window.location.hostname;
-  const lsepSpanHtml = ' <span class="lsep">|</span>';
-  const flagTrackerButtonHtml = '<a class="flag-tracker-link" title="register this post to be tracked">track</a>';
+  const flagTrackerButton = '<div class="grid--cell">'
+                            + '<button class="flag-tracker-link s-btn s-btn__link" title="register this post to be tracked">track</button>'
+                          + '</div>';
 
   function computeContentHash(postContent) {
     if (!postContent) return 0;
@@ -81,12 +82,10 @@
   }
 
   function handlePosts() {
-    [...document.querySelectorAll('.post-layout .post-menu')].forEach(element => {
+    [...document.querySelectorAll('.post-layout .js-post-menu')].forEach(element => {
       if (element.innerText.match('track')) return; // element already exists
-      element.insertAdjacentHTML('beforeend', ' ');
-      element.insertAdjacentHTML('beforeend', flagTrackerButtonHtml);
-      element.insertAdjacentHTML('beforeend', lsepSpanHtml);
-      element.querySelector('.flag-tracker-link').addEventListener('click', () => trackFlag(element));
+      element.children[0].insertAdjacentHTML('beforeend', flagTrackerButtonHtml);
+      element.children[0].querySelector('.flag-tracker-link').addEventListener('click', () => trackFlag(element));
     });
   }
 
@@ -99,7 +98,7 @@
     if (matches !== null && xhr.status === 200) {
       const postId = matches[1];
       const postIsQuestion = document.querySelector('.question').getAttribute('data-questionid') == postId;
-      const element = postIsQuestion ? document.querySelector('.question .post-menu') : document.querySelector(`#answer-${postId} .post-menu`);
+      const element = postIsQuestion ? document.querySelector('.question .js-post-menu') : document.querySelector(`#answer-${postId} .js-post-menu`);
       trackFlag(element);
     }
   });
