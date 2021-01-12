@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Natty Reporter
 // @namespace    https://github.com/Tunaki/stackoverflow-userscripts
-// @version      0.26
+// @version      0.27
 // @description  Adds a Natty link below answers that sends a report for the bot in SOBotics. Intended to be used to give feedback on reports (true positive / false positive / needs edit) or report NAA/VLQ-flaggable answers.
 // @author       Tunaki
 // @include      /^https?:\/\/(www\.)?stackoverflow\.com\/.*/
@@ -10,6 +10,7 @@
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
 // @downloadURL  https://github.com/SOBotics/Userscripts/blob/master/Natty/NattyReporter.user.js
 // ==/UserScript==
+/* globals $ */
 
 var room = 111347;
 
@@ -22,8 +23,8 @@ if (typeof GM_xmlhttpRequest === 'function') {
 
 function sendChatMessage(msg, answerId) {
   GM.xmlHttpRequest({
-    method: 'GET', 
-    url: 'https://chat.stackoverflow.com/rooms/' + room, 
+    method: 'GET',
+    url: 'https://chat.stackoverflow.com/rooms/' + room,
     onload: function (response) {
       var fkey = response.responseText.match(/hidden" value="([\dabcdef]{32})/)[1];
       GM.xmlHttpRequest({
@@ -42,7 +43,7 @@ function sendChatMessage(msg, answerId) {
 function sendSentinelAndChat(answerId, feedback) {
   var link = 'https://stackoverflow.com/a/' + answerId;
   GM.xmlHttpRequest({
-    method: 'GET', 
+    method: 'GET',
     url: 'http://logs.sobotics.org/napi/api/feedback/' + answerId,
     onload: function (samserverResponse) {
       if (samserverResponse.status !== 200) {
@@ -110,7 +111,7 @@ const ScriptToInject = function() {
     e.preventDefault();
     var $this = $(this);
     if ($this.closest('a.natty-reported').length > 0) return false;
-    var postId = $this.closest('div.post-menu').find('a.js-share-link').attr('href').split('/')[2];
+    var postId = $this.closest('div.js-post-menu').find('a.js-share-link').attr('href').split('/')[2];
     var feedback = $this.text();
     window.postMessage(JSON.stringify(['postHrefReportNatty', postId, feedback]), "*");
   }
@@ -119,25 +120,25 @@ const ScriptToInject = function() {
 
     var comments = {
       'link-only':
-        'A link to a solution is welcome, but please ensure your answer is useful without it: ' + 
+        'A link to a solution is welcome, but please ensure your answer is useful without it: ' +
         '[add context around the link](//meta.stackexchange.com/a/8259) so your fellow users will ' +
-        'have some idea what it is and why it’s there, then quote the most relevant part of the ' + 
+        'have some idea what it is and why it’s there, then quote the most relevant part of the ' +
         'page you\'re linking to in case the target page is unavailable. ' +
         '[Answers that are little more than a link may be deleted.](//stackoverflow.com/help/deleted-answers)',
       'naa <50':
         'This does not provide an answer to the question. You can [search for similar questions](//stackoverflow.com/search), ' +
         'or refer to the related and linked questions on the right-hand side of the page to find an answer. ' +
-        'If you have a related but different question, [ask a new question](//stackoverflow.com/questions/ask), ' + 
+        'If you have a related but different question, [ask a new question](//stackoverflow.com/questions/ask), ' +
         'and include a link to this one to help provide context. ' +
         'See: [Ask questions, get answers, no distractions](//stackoverflow.com/tour)',
       'naa >50':
         'This post doesn\'t look like an attempt to answer this question. Every post here is expected to be ' +
         'an explicit attempt to *answer* this question; if you have a critique or need a clarification of ' +
-        'the question or another answer, you can [post a comment](//stackoverflow.com/help/privileges/comment) ' + 
+        'the question or another answer, you can [post a comment](//stackoverflow.com/help/privileges/comment) ' +
         '(like this one) directly below it. Please remove this answer and create either a comment or a new question. ' +
         'See: [Ask questions, get answers, no distractions](//stackoverflow.com/tour)',
       'thanks <15':
-        'Please don\'t add _"thanks"_ as answers. They don\'t actually provide an answer to the question, ' + 
+        'Please don\'t add _"thanks"_ as answers. They don\'t actually provide an answer to the question, ' +
         'and can be perceived as noise by its future visitors. Once you [earn](http://meta.stackoverflow.com/q/146472) ' +
         'enough [reputation](http://stackoverflow.com/help/whats-reputation), you will gain privileges to ' +
         '[upvote answers](http://stackoverflow.com/help/privileges/vote-up) you like. This way future visitors of the question ' +
@@ -161,7 +162,7 @@ const ScriptToInject = function() {
     };
 
     e.preventDefault();
-    var postID = $(this).closest('div.post-menu').find('a.js-share-link').attr('href').split('/')[2];
+    var postID = $(this).closest('div.js-post-menu').find('a.js-share-link').attr('href').split('/')[2];
     var whichFeedback = $(this).text();
 
     //flag the post (and report to Natty)
@@ -202,7 +203,7 @@ const ScriptToInject = function() {
         }
       }
       var comment = comments[whichFeedback];
-      $.post('//stackoverflow.com/posts/' + postID + '/comments', {'fkey': StackExchange.options.user.fkey, 'comment': comment}, 
+      $.post('//stackoverflow.com/posts/' + postID + '/comments', {'fkey': StackExchange.options.user.fkey, 'comment': comment},
         function(data, textStatus, jqXHR) {
           var commentUI = StackExchange.comments.uiForPost($('#comments-' + postID));
           commentUI.addShow(true, false);
@@ -224,9 +225,9 @@ const ScriptToInject = function() {
   function handleAnswers(postId) {
     var $posts;
     if(!postId) {
-      $posts = $('.answer .post-menu');
+      $posts = $('.answer .js-post-menu .js-share-link').parent().parent();
     } else {
-      $posts = $('[data-answerid="' + postId + '"] .post-menu');
+      $posts = $('[data-answerid="' + postId + '"] .js-post-menu .js-share-link').parent().parent();
     }
     $posts.each(function() {
       var $this = $(this);
@@ -235,7 +236,8 @@ const ScriptToInject = function() {
       $.each(['tp', 'fp', 'ne'], function(i, val) { $dropdown.append(createDropDownOption(val, reportToNatty)); });
       $dropdown.append($('<hr>').css({'margin-bottom': '6.5px'}));
       $.each(['link-only', 'naa', 'lib', 'thanks'], function(i, val) { $dropdown.append(createDropDownOption(val, shortcutClicked)); });
-      $this.append($('<a>').attr('class', 'report-natty-link').html('natty').hover(function() { $dropdown.toggle(); }).append($dropdown));
+      $this.append($('<button>').attr('class', 'report-natty-link s-btn s-btn__link').html('natty')
+           .hover(function() { $dropdown.toggle(); }).append($dropdown)).wrap('<div class="grid--cell"></div>');
       $this.append(' ');
       $this.append($('<span>').attr('class', 'lsep').html('|'));
     });
