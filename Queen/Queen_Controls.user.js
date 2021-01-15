@@ -5,7 +5,7 @@
 // @author      double-beep
 // @include     https://chat.stackoverflow.com/rooms/111347/*
 // @include     https://chat.stackoverflow.com/rooms/167908/*
-// @version     1.0.2
+// @version     1.0.3
 // @downloadURL https://github.com/SOBotics/Userscripts/raw/master/Queen/Queen_Controls.user.js
 // @updateURL   https://github.com/SOBotics/Userscripts/raw/master/Queen/Queen_Controls.user.js
 // @run-at      document-end
@@ -58,7 +58,7 @@
 
   function newChatEventOccured(event) {
     // Event should happen in the current room, it should be a new message (type 1) or an edit (type 2), by Queen (userId 6294609). It should be a report.
-    if (event.room_id == currentRoomId && event.event_type < 2 && event.user_id == queenUserId && event.content.match(phraseToCheck)) {
+    if (event.room_id == currentRoomId && event.event_type <= 2 && event.user_id == queenUserId && event.content.match(phraseToCheck)) {
       setTimeout(() => decorateChatMessage(document.querySelector(`#message-${event.message_id} .content`)), 0); // hacky setTimeout; element is not found otherwise
     }
   }
