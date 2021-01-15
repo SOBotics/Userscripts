@@ -68,11 +68,9 @@
     CHAT.addEventHandlerHook(newChatEventOccured);
   }
 
-  const ready = CHAT.Hub.roomReady;
-  CHAT.Hub.roomReady = {
-    fire: function(...args) {
-      ready.fire(...args);
-      init(); // chat page loaded
-    }
+  const ready = CHAT.Hub.roomReady.fire;
+  CHAT.Hub.roomReady.fire = function() {
+    ready.apply(this, arguments);
+    init(); // chat page loaded
   }
 })();

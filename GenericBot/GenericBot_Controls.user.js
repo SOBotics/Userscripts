@@ -5,7 +5,7 @@
 // @author      double-beep
 // @include     https://chat.stackoverflow.com/rooms/111347/*
 // @include     https://chat.stackoverflow.com/rooms/167908/*
-// @version     1.0.0
+// @version     1.0.1
 // @downloadURL https://github.com/SOBotics/Userscripts/raw/master/GenericBot/GenericBot_Controls.user.js
 // @updateURL   https://github.com/SOBotics/Userscripts/raw/master/GenericBot/GenericBot_Controls.user.js
 // @run-at      document-end
@@ -67,11 +67,9 @@
     CHAT.addEventHandlerHook(newChatEventOccured);
   }
 
-  const ready = CHAT.Hub.roomReady;
-  CHAT.Hub.roomReady = {
-    fire: function(...args) {
-      ready.fire(...args);
-      init(); // chat page loaded
-    }
+  const ready = CHAT.Hub.roomReady.fire;
+  CHAT.Hub.roomReady.fire = function() {
+    ready.apply(this, arguments);
+    init(); // chat page loaded
   }
 })();
