@@ -14,12 +14,12 @@
 // @grant       none
 // ==/UserScript==
 /* jshint esversion: 6 */
-/* globals CHAT */
+/* globals CHAT, ControlHelper */
 
 (function() {
   const botUserId = 7418352;
   const phraseToCheck = 'is possible';
-  const buttonsHtml = `<span class="gut-controls-buttons"> [ <a class="gut-k" href="#">k</a> | <a class="gut-f" href="#">f</a> ] </span>`;
+  const buttonsHtml = '<span class="gut-controls-buttons"> [ <a class="gut-k" href="#">k</a> | <a class="gut-f" href="#">f</a> ] </span>';
   const controlHelper = new ControlHelper(botUserId, phraseToCheck, buttonsHtml);
 
   function init() {

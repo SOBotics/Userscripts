@@ -14,7 +14,7 @@
 // @grant       none
 // ==/UserScript==
 /* jshint esversion: 6 */
-/* globals CHAT */
+/* globals CHAT, ControlHelper */
 
 (function() {
   const botUserId = 6817005;

@@ -13,12 +13,12 @@
 // @grant       none
 // ==/UserScript==
 /* jshint esversion: 6 */
-/* globals CHAT */
+/* globals CHAT, ControlHelper */
 
 (function() {
   const botUserId = 7481043;
   const phraseToCheck = 'has been edited';
-  const buttonsHtml = `<span class="generic-controls-buttons"> [ <a class="generic-untrack" href="#">untrack</a> ] </span>`;
+  const buttonsHtml = '<span class="generic-controls-buttons"> [ <a class="generic-untrack" href="#">untrack</a> ] </span>';
   const controlHelper = new ControlHelper(botUserId, phraseToCheck, buttonsHtml);
 
   function init() {

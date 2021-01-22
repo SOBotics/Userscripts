@@ -1,0 +1,50 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true,
+        "jasmine": true,
+        "jquery": true,
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended"
+    ],
+    "globals": {
+        "GM": "writeable",
+        "GM_addStyle": "writeable",
+        "GM_addValueChangeListener": "writeable",
+        "GM_deleteValue": "writeable",
+        "GM_download": "writeable",
+        "GM_getResourceText": "writeable",
+        "GM_getResourceURL": "writeable",
+        "GM_getTab": "writeable",
+        "GM_getTabs": "writeable",
+        "GM_getValue": "writeable",
+        "GM_info": "writeable",
+        "GM_listValues": "writeable",
+        "GM_log": "writeable",
+        "GM_notification": "writeable",
+        "GM_openInTab": "writeable",
+        "GM_registerMenuCommand": "writeable",
+        "GM_removeValueChangeListener": "writeable",
+        "GM_saveTab": "writeable",
+        "GM_setClipboard": "writeable",
+        "GM_setTab": "writeable",
+        "GM_setValue": "writeable",
+        "GM_unregisterMenuCommand": "writeable",
+        "GM_xmlhttpRequest": "writeable",
+        "TM_info": "writeable",
+        "uneval": "writeable",
+        "unsafeWindow": "writeable"
+    },
+    "parserOptions": {
+        "ecmaVersion": 2020
+    },
+    "rules": {
+        "semi": [
+            1,
+            "always"
+        ],
+        "quotes": [2, "single", { "avoidEscape": true }]
+    }
+}

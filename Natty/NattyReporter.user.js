@@ -10,6 +10,7 @@
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
 // @downloadURL  https://github.com/SOBotics/Userscripts/blob/master/Natty/NattyReporter.user.js
 // ==/UserScript==
+/* eslint-disable */
 /* globals $ */
 
 var room = 111347;
@@ -94,7 +95,7 @@ function sendRequest(event) {
       }
     });
   }
-};
+}
 
 window.addEventListener('message', sendRequest, false);
 
@@ -105,7 +106,7 @@ const ScriptToInject = function() {
       this.addEventListener('load', callback.bind(null, this), false);
       open.apply(this, arguments);
     };
-  };
+  }
 
   function reportToNatty(e) {
     e.preventDefault();
@@ -113,7 +114,7 @@ const ScriptToInject = function() {
     if ($this.closest('a.natty-reported').length > 0) return false;
     var postId = $this.closest('div.js-post-menu').find('a.js-share-link').attr('href').split('/')[2];
     var feedback = $this.text();
-    window.postMessage(JSON.stringify(['postHrefReportNatty', postId, feedback]), "*");
+    window.postMessage(JSON.stringify(['postHrefReportNatty', postId, feedback]), '*');
   }
 
   function shortcutClicked(e) {
@@ -217,7 +218,7 @@ const ScriptToInject = function() {
     return $('<dd>').append(
       $('<a>').text(text)
         .css({ 'display': 'block', 'margin-top': '3px', 'padding': '0px 3px', 'width': 'auto' })
-        .hover(function(){$(this).css({ 'background': '#eff0f1' });}, function(){$(this).css({ 'background': 'transparent' })})
+        .hover(function(){$(this).css({ 'background': '#eff0f1' });}, function(){$(this).css({ 'background': 'transparent' });})
         .click(onClick)
     );
   }
@@ -241,7 +242,7 @@ const ScriptToInject = function() {
       $this.append(' ');
       $this.append($('<span>').attr('class', 'lsep').html('|'));
     });
-  };
+  }
 
   addXHRListener(function(xhr) {
     if (/ajax-load-realtime/.test(xhr.responseURL)) {
@@ -256,7 +257,7 @@ const ScriptToInject = function() {
   addXHRListener(function(xhr) {
     let matches = /flags\/posts\/(\d+)\/add\/(AnswerNotAnAnswer|PostLowQuality)/.exec(xhr.responseURL);
     if (matches !== null && xhr.status === 200) {
-      window.postMessage(JSON.stringify(['postHrefReportNatty', matches[1], 'tp']), "*");
+      window.postMessage(JSON.stringify(['postHrefReportNatty', matches[1], 'tp']), '*');
     }
   });
 
@@ -264,7 +265,7 @@ const ScriptToInject = function() {
   addXHRListener(function(xhr) {
     let matches = /(\d+)\/recommend-delete/.exec(xhr.responseURL);
     if (matches !== null && xhr.status === 200) {
-      window.postMessage(JSON.stringify(['postHrefReportNatty', matches[1], 'tp']), "*");
+      window.postMessage(JSON.stringify(['postHrefReportNatty', matches[1], 'tp']), '*');
     }
   });
 

@@ -1,21 +1,18 @@
 // ==UserScript==
 // @name          Stack Exchange Flag Tracker
 // @namespace     https://so.floern.com/
-// @version       1.4
+// @version       1.2
 // @description   Tracks flagged posts on Stack Exchange.
 // @author        Floern
 // @contributor   double-beep
-// @match         *://*.stackexchange.com/*/*
-// @match         *://*.stackoverflow.com/*/*
-// @match         *://*.superuser.com/*/*
-// @match         *://*.serverfault.com/*/*
-// @match         *://*.askubuntu.com/*/*
-// @match         *://*.stackapps.com/*/*
-// @match         *://*.mathoverflow.net/*/*
-// @exclude       *://chat.*
+// @include       /^https?:\/\/(?:[^/.]+\.)*(?:stackexchange\.com|stackoverflow\.com|serverfault\.com|superuser\.com|askubuntu\.com|stackapps\.com|mathoverflow\.net)\/(?:q(?:uestions)?)/
+// @exclude       *://chat.stackoverflow.com/*
+// @exclude       *://chat.stackexchange.com/*
+// @exclude       *://chat.*.stackexchange.com/*
+// @exclude       *://api.*.stackexchange.com/*
+// @exclude       *://data.stackexchange.com/*
 // @connect       so.floern.com
-// @require       https://greasemonkey.github.io/gm4-polyfill/gm4-polyfill.js
-// @grant         GM.xmlHttpRequest
+// @grant         GM_xmlhttpRequest
 // @run-at        document-end
 // @updateURL     https://github.com/SOBotics/Userscripts/raw/master/GenericBot/flagtracker.user.js
 // @downloadURL   https://github.com/SOBotics/Userscripts/raw/master/GenericBot/flagtracker.user.js
@@ -28,9 +25,9 @@
   const myProfileElement = document.querySelector('.my-profile .gravatar-wrapper-24');
   const flaggername = myProfileElement ? myProfileElement.title : null;
   const sitename = window.location.hostname;
-  const flagTrackerButton = '<div class="grid--cell">'
-                            + '<button class="flag-tracker-link s-btn s-btn__link" title="register this post to be tracked">track</button>'
-                          + '</div>';
+  const flagTrackerButtonHtml = '<div class="grid--cell">'
+                              + '  <button class="flag-tracker-link s-btn s-btn__link" title="register this post to be tracked">track</button>'
+                              + '</div>';
 
   function computeContentHash(postContent) {
     if (!postContent) return 0;
@@ -52,7 +49,7 @@
 
   function sendTrackRequest(postId, contentHash, flagTrackerButtonElement) {
     if (!flaggername || !postId || !contentHash) return; // one of these doesn't exist for whatever reason; return
-    GM.xmlHttpRequest({
+    GM_xmlhttpRequest({
       method: 'POST',
       url: 'https://so.floern.com/api/trackpost.php',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -63,14 +60,16 @@
           + '&flagger=' + encodeURIComponent(flaggername),
       onload: function (response) {
         if (response.status !== 200) {
-          alert('Flag Tracker Error: Status ' + response.status);
+          StackExchange.helpers.showToast('Flag Tracker Error: Status ' + response.status + '. See console for details', { type: 'danger' });
+          console.error(response.responseText);
           return;
         }
         flagTrackerButtonElement.classList.add('flag-tracked');
         flagTrackerButtonElement.innerHTML = 'tracked';
       },
       onerror: function (response) {
-        alert('Flag Tracker Error: ' + response.responseText);
+        StackExchange.helpers.showToast('Flag Tracker Error. See console for details.', { type: 'danger' });
+        console.error(response.responseText);
       }
     });
   }

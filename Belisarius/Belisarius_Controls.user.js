@@ -14,12 +14,12 @@
 // @grant       none
 // ==/UserScript==
 /* jshint esversion: 6 */
-/* globals CHAT */
+/* globals CHAT, ControlHelper */
 
 (function() {
   const botUserId = 13903854;
   const phraseToCheck = 'All revisions';
-  const buttonsHtml = `<span class="beli-controls-buttons"> [ <a class="beli-tp" href="#">tp</a> | <a class="beli-fp" href="#">fp</a> ] </span>`;
+  const buttonsHtml = '<span class="beli-controls-buttons"> [ <a class="beli-tp" href="#">tp</a> | <a class="beli-fp" href="#">fp</a> ] </span>';
   const controlHelper = new ControlHelper(botUserId, phraseToCheck, buttonsHtml);
 
   function init() {
