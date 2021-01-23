@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Sentinel Reporter
 // @namespace    https://github.com/SOBotics
-// @version      1.3
+// @version      1.4
 // @description  Quick feedback to Natty directly from Sentinel's post page
 // @author       Filnor
 // @contributor  geisterfurz007
@@ -30,7 +30,19 @@
                             + '   <button type="button" class="fb-button" id="feedback-fp" title="fp - false positive">❌</button>'
                             + '   <button type="button" class="fb-button" id="feedback-ne" title="ne - needs editing">✏️</button>'
                             + '</p>';
-  GM_addStyle('.fb-button { background: none; border: 0px solid black; }');
+  const eventHistoryHtml = document.createElement('div');
+  eventHistoryHtml.classList.add('alert', 'alert-info', 'sentinel-reporter-d-none');
+  const eventHistorySpan = document.createElement('span');
+  eventHistorySpan.id = 'sentinel-reporter-event-span';
+  eventHistoryHtml.appendChild(eventHistorySpan);
+
+  GM_addStyle('.fb-button { background: none; border: 0px solid black; } .sentinel-reporter-d-none { display: none !important }');
+
+  function handleEvent(text) {
+    const eventSpan = document.querySelector('#sentinel-reporter-event-span');
+    eventSpan.insertAdjacentHTML('beforeend', text + '<br>');
+    if (eventSpan.parentElement.classList.contains('sentinel-reporter-d-none')) eventSpan.parentElement.classList.remove('sentinel-reporter-d-none');
+  }
 
   function sendChatMessage(fkey, messageToSend) {
     return new Promise((resolve, reject) => {
@@ -40,11 +52,15 @@
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         data: `text=${encodeURIComponent(messageToSend)}&fkey=${fkey}`,
         onload: function(response) {
-          const parsedResponse = JSON.parse(response);
-          parsedResponse.id && parsedResponse.time ? resolve(true) : reject('Failed to send chat message: conflict!');
+          if (response.status === 200) {
+            const parsedResponse = JSON.parse(response.responseText);
+            parsedResponse.id && parsedResponse.time ? resolve(true) : reject('Failed to send chat message: conflict!');
+          } else {
+            reject('Failed to send chat message: ' + response.status + '.' + response.responseText);
+          }
         },
         onerror: function(error) {
-          reject('Error while trying to send chat message: ' + error.status + '. See console for more details');
+          reject('Error while trying to send chat message: ' + error.status + '. See console for more details or retry.');
           console.error(error.responseText);
         }
       });
@@ -57,11 +73,13 @@
         method: 'GET',
         url: chatRoomUrl,
         onload: function (response) {
-          const fkey = response.responseText.match(/hidden" value="([\dabcdef]{32})/)[1];
+          const domParser = new DOMParser();
+          const parsedHtml = domParser.parseFromString(response.responseText, 'text/html');
+          const fkey = parsedHtml.querySelector('#fkey').value;
           resolve(fkey);
         },
         onerror: function(error) {
-          reject('Error while trying to fetch fkey from chat ' + error.status + '. See console for more details.');
+          reject('Error ' + error.status + ' while trying to fetch fkey from chat. See console for more details.');
           console.error(error);
         }
       });
@@ -69,6 +87,7 @@
   }
 
   document.querySelector('h3').insertAdjacentHTML('afterend', feedbackButtonsHtml); // insert buttons
+  document.querySelector('#feedback-line').insertAdjacentElement('afterend', eventHistoryHtml);
   [...document.querySelectorAll('.fb-button')].forEach(el => {
     el.addEventListener('click', async function() {
       try {
@@ -76,10 +95,10 @@
         const chatMessage = getFeedbackString(answerUrl, el.id.split('-')[1]);
         await sendChatMessage(chatFkey, chatMessage);
       } catch(error) {
-        alert(error);
+        handleEvent('❌ ' + error);
         return;
       }
-      document.querySelector('#feedback-line').innerHTML = 'Feedback sent.';
+      handleEvent('✔️ Feedback sent.');
     });
   });
 })();
