@@ -24,4 +24,5 @@ A list of useful userscripts for the different SOBotics bots.
 
  - [Natty Reporter](https://github.com/SOBotics/Userscripts/blob/master/Natty/NattyReporter.user.js) ([install](https://github.com/SOBotics/Userscripts/raw/master/Natty/NattyReporter.user.js)) - Tunaki 
  - [Natty Controls](https://github.com/SOBotics/Userscripts/blob/master/Natty/Natty_Controls.user.js) ([install](https://github.com/SOBotics/Userscripts/raw/master/Natty/Natty_Controls.user.js)) - Tiny Giant
- - [Sentinel Reporter](https://github.com/SOBotics/Userscripts/blob/master/SentinelReporter/SentinelReporter.user.js) ([install](https://github.com/SOBotics/Userscripts/raw/master/Natty/SentinelReporter.user.js)) - Filnor
+ - [Sentinel Reporter](https://github.com/SOBotics/Userscripts/blob/master/Natty/SentinelReporter.user.js) ([install](https://github.com/SOBotics/Userscripts/raw/master/Natty/SentinelReporter.user.js)) - Filnor
+- [Generate Natty Reports](https://github.com/SOBotics/Userscripts/blob/master/Natty/GenerateNattyReports.user.js) ([install](https://github.com/SOBotics/Userscripts/raw/master/Natty/GenerateNattyReports.user.js)) - double-beep
