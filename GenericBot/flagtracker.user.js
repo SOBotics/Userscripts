@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Stack Exchange Flag Tracker
 // @namespace     https://so.floern.com/
-// @version       1.2
+// @version       1.2.1
 // @description   Tracks flagged posts on Stack Exchange.
 // @author        Floern
 // @contributor   double-beep
@@ -25,8 +25,8 @@
   const myProfileElement = document.querySelector('.my-profile .gravatar-wrapper-24');
   const flaggername = myProfileElement ? myProfileElement.title : null;
   const sitename = window.location.hostname;
-  const flagTrackerButtonHtml = '<div class="grid--cell">'
-                              + '  <button class="flag-tracker-link s-btn s-btn__link" title="register this post to be tracked">track</button>'
+  const flagTrackerButtonHtml = '<div class="flex--item">'
+                              + '  <button class="flag-tracker-link s-btn s-btn__link" title="Register this post to be tracked">Track</button>'
                               + '</div>';
 
   function computeContentHash(postContent) {
@@ -65,7 +65,7 @@
           return;
         }
         flagTrackerButtonElement.classList.add('flag-tracked');
-        flagTrackerButtonElement.innerHTML = 'tracked';
+        flagTrackerButtonElement.innerHTML = 'Track ✓';
       },
       onerror: function (response) {
         StackExchange.helpers.showToast('Flag Tracker Error. See console for details.', { type: 'danger' });

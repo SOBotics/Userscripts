@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Natty Reporter
 // @namespace    https://github.com/Tunaki/stackoverflow-userscripts
-// @version      0.27
+// @version      0.28
 // @description  Adds a Natty link below answers that sends a report for the bot in SOBotics. Intended to be used to give feedback on reports (true positive / false positive / needs edit) or report NAA/VLQ-flaggable answers.
 // @author       Tunaki
 // @include      /^https?:\/\/(www\.)?stackoverflow\.com\/.*/
@@ -232,15 +232,15 @@ const ScriptToInject = function() {
     }
     $posts.each(function() {
       var $this = $(this);
-      $this.append(' ');
+      var nattyButtonHtml = ' <div class="flex--item"> '
+                          + '  <button class="report-natty-link s-btn s-btn__link"> Natty </button> '
+                          + ' </div> ';
+      $this.append($(nattyButtonHtml));
       var $dropdown = $('<dl>').css({ 'margin': '0', 'margin-left': '-5px', 'z-index': '1', 'position': 'absolute', 'white-space': 'nowrap', 'background': '#FFF', 'padding': '2px', 'border': '1px solid #9fa6ad', 'box-shadow': '0 2px 4px rgba(36,39,41,0.3)', 'cursor': 'default' }).hide();
       $.each(['tp', 'fp', 'ne'], function(i, val) { $dropdown.append(createDropDownOption(val, reportToNatty)); });
       $dropdown.append($('<hr>').css({'margin-bottom': '6.5px'}));
       $.each(['link-only', 'naa', 'lib', 'thanks'], function(i, val) { $dropdown.append(createDropDownOption(val, shortcutClicked)); });
-      $this.append($('<button>').attr('class', 'report-natty-link s-btn s-btn__link').html('natty')
-           .hover(function() { $dropdown.toggle(); }).append($dropdown)).wrap('<div class="grid--cell"></div>');
-      $this.append(' ');
-      $this.append($('<span>').attr('class', 'lsep').html('|'));
+      $this.find(".report-natty-link").hover(function() { $dropdown.toggle(); }).append($dropdown)
     });
   }
 
