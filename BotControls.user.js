@@ -3,8 +3,8 @@
 // @namespace    https://github.com/SOBotics
 // @description  Simplifies the process of sending feedback to most SOBotics bots
 // @author       double-beep
-// @include      https://chat.stackoverflow.com/rooms/111347/*
-// @include      https://chat.stackoverflow.com/rooms/167908/*
+// @match        https://chat.stackoverflow.com/rooms/111347/*
+// @match        https://chat.stackoverflow.com/rooms/167908/*
 // @version      1.0.0
 // @downloadURL  https://github.com/SOBotics/Userscripts/raw/master/BotControls.user.js
 // @updateURL    https://github.com/SOBotics/Userscripts/raw/master/BotControls.user.js
