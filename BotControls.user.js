@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bot Controls
 // @namespace    https://github.com/SOBotics
-// @description  Allows
+// @description  Simplifies the process of sending feedback to most SOBotics bots
 // @author       double-beep
 // @include      https://chat.stackoverflow.com/rooms/111347/*
 // @include      https://chat.stackoverflow.com/rooms/167908/*

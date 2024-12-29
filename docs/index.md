@@ -4,7 +4,7 @@ A list of useful userscripts for the different SOBotics bots.
 
 # All bots
 
-- [Bot controls](https://github.com/SOBotics/Userscripts/blog/master/BotControls.user.js) ([install](https://github.com/SOBotics/Userscripts/raw/master/BotControls.user.js)) - double-beep
+- [Bot controls](https://github.com/SOBotics/Userscripts/blob/master/BotControls.user.js) ([install](https://github.com/SOBotics/Userscripts/raw/master/BotControls.user.js)) - double-beep
 
 # Generic Bot
 
