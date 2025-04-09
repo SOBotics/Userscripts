@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Sentinel Reporter
 // @namespace    https://github.com/SOBotics
-// @version      1.5
+// @version      1.6
 // @description  Quick feedback to Natty directly from Sentinel's post page
 // @author       Filnor
 // @contributor  geisterfurz007
