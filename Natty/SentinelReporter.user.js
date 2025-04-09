@@ -6,7 +6,7 @@
 // @author       Filnor
 // @contributor  geisterfurz007
 // @contributor  double-beep
-// @include      https://sentinel.erwaysoftware.com/*
+// @include      https://sentinel.sobotics.org/*
 // @grant        GM_addStyle
 // @grant        GM_xmlhttpRequest
 // @downloadURL  https://github.com/SOBotics/Userscripts/raw/master/Natty/SentinelReporter.user.js
@@ -20,7 +20,7 @@
         function getFeedbackButton(type, title, icon) {
             const button = document.createElement('button');
             button.classList.add('fb-button');
-            button.id = `feedback-${type}`
+            button.id = `feedback-${type}`;
             button.title = `${type} - ${title}`;
             button.innerText = icon;
             button.type = 'button';
@@ -127,7 +127,7 @@
                     const chatFkey = await getFkeyFromChat();
                     const chatMessage = getFeedbackString(answerUrl, feedbackType);
                     await sendChatMessage(chatFkey, chatMessage);
-                } catch(error) {
+                } catch (error) {
                     handleEvent(`❌ ${error}`);
                     return;
                 }
